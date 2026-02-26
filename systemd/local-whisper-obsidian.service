@@ -1,0 +1,19 @@
+[Unit]
+Description=local-whisper-obsidian: local voice transcription watcher
+Documentation=https://github.com/serg-markovich/local-whisper-obsidian
+
+[Service]
+Type=simple
+ExecStart=/bin/bash %h/.config/local-whisper-obsidian/watch.sh
+Restart=on-failure
+RestartSec=5s
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=local-whisper-obsidian
+# Kill the entire process group including inotifywait child process
+KillMode=control-group
+KillSignal=SIGTERM
+TimeoutStopSec=10s
+
+[Install]
+WantedBy=default.target

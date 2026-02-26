@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+*.egg-info/
+
+# Local config (contains personal paths — never commit)
+.env
+*.env
+
+# Test artifacts
+tests/*.md
+tests/sample.*
+!tests/test_*.py
+
+# OS
+.DS_Store
+*.swp
