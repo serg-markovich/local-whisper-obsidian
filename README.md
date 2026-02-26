@@ -96,9 +96,9 @@ make clean      # remove test artifacts
 
 `faster-whisper` · `systemd` · `inotify-tools` · `fswatch` · `Python 3.11` · `pytest` · `ruff`
 
-## Author's setup
+## My setup
 
-- Model: `medium` — better accuracy for multilingual notes (Ukrainian, Russian, German)
+- Model: `medium` — better accuracy for multilingual notes
 - Sync: Syncthing (Android → Linux)
 - Vault structure: `0_inbox` for new voice notes, `7_system/files` for Obsidian mobile recordings
 
