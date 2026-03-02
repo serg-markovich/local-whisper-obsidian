@@ -1,0 +1,13 @@
+.git
+.github
+**/__pycache__
+**/*.pyc
+systemd/
+tests/
+bin/watch-linux.sh
+bin/watch-macos.sh
+.env
+.env.example
+Makefile
+install.sh
+*.md

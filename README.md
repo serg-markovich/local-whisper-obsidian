@@ -96,6 +96,36 @@ make clean      # remove test artifacts
 
 `faster-whisper` · `systemd` · `inotify-tools` · `fswatch` · `Python 3.11` · `pytest` · `ruff`
 
+## Installation (Docker / NAS)
+
+For NAS setups (Unraid, Synology, QNAP) or any host where you prefer
+not to install Python and system dependencies.
+
+**Prerequisites:** Docker and Docker Compose installed on the host.
+
+    git clone https://github.com/serg-markovich/local-whisper-obsidian
+    cd local-whisper-obsidian
+    # Edit volume path in docker/docker-compose.yml, then:
+    make docker-build
+    make docker-up
+    make docker-logs
+
+Configuration is passed via environment variables in `docker/docker-compose.yml`:
+
+| Variable     | Default  | Description                                          |
+|--------------|----------|------------------------------------------------------|
+| `MODEL`      | `small`  | Whisper model size (see Model selection table above) |
+| `LANGUAGE`   | `auto`   | Language code or `auto`                              |
+| `SCAN_PATHS` | `/vault` | Colon-separated paths **inside the container**       |
+
+> **Paths:** `SCAN_PATHS` uses container-side paths from your volume mount.
+> If you mount `/mnt/vault:/vault`, set `SCAN_PATHS=/vault/0_inbox`.
+
+> **GPU:** CPU-only image. GPU acceleration is not supported.
+
+> **Model cache:** Stored in named volume `whisper_models` — survives
+> container restarts, no re-download on `docker compose up`.
+
 ## My setup
 
 - Model: `medium` — better accuracy for multilingual notes

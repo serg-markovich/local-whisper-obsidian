@@ -1,4 +1,4 @@
-.PHONY: install start stop restart status logs test lint clean
+.PHONY: install start stop restart status logs test lint clean docker-build docker-up docker-down docker-logs
 
 CONFIG_DIR  := $(HOME)/.config/local-whisper-obsidian
 SYSTEMD_DIR := $(HOME)/.config/systemd/user
@@ -53,3 +53,17 @@ lint:
 clean:
 	rm -f tests/*.md
 	find . -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+
+docker-build:
+	docker compose -f docker/docker-compose.yml --env-file docker/.env build
+
+docker-up:
+	@test -f docker/.env || { echo "Error: docker/.env not found. Run: cp docker/.env.example docker/.env"; exit 1; }
+	docker compose -f docker/docker-compose.yml --env-file docker/.env up -d
+
+
+docker-down:
+	docker compose -f docker/docker-compose.yml down
+
+docker-logs:
+	docker compose -f docker/docker-compose.yml logs -f
