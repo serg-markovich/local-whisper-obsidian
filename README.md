@@ -102,35 +102,56 @@ For NAS setups (Unraid, Synology, QNAP) or any host where you prefer
 not to install Python and system dependencies.
 
 **Prerequisites:** Docker and Docker Compose installed on the host.
+For autostart after reboot, ensure Docker daemon is enabled:
+```bash
+    sudo systemctl enable docker
+```
 
-    git clone https://github.com/serg-markovich/local-whisper-obsidian
-    cd local-whisper-obsidian
-    # Edit volume path in docker/docker-compose.yml, then:
+**Quick start:**
+```bash
+    cp docker/.env.example docker/.env
+    nano docker/.env        # set VAULT_PATH and SCAN_PATHS
     make docker-build
     make docker-up
     make docker-logs
+```
 
-Configuration is passed via environment variables in `docker/docker-compose.yml`:
+**Configuration** via `docker/.env`:
 
 | Variable     | Default  | Description                                          |
 |--------------|----------|------------------------------------------------------|
+| `VAULT_PATH` | —        | Absolute path to your Obsidian vault on the host     |
 | `MODEL`      | `small`  | Whisper model size (see Model selection table above) |
 | `LANGUAGE`   | `auto`   | Language code or `auto`                              |
-| `SCAN_PATHS` | `/vault` | Colon-separated paths **inside the container**       |
+| `SCAN_PATHS` | `/vault` | Colon-separated paths **inside** the container       |
 
-> **Paths:** `SCAN_PATHS` uses container-side paths from your volume mount.
-> If you mount `/mnt/vault:/vault`, set `SCAN_PATHS=/vault/0_inbox`.
+> **Paths:** `SCAN_PATHS` uses container-side paths. If you mount
+> `/home/user/vault:/vault`, set `SCAN_PATHS=/vault/0_inbox`.
+
+> **Model cache:** Stored in Docker volume `whisper_models` — survives
+> restarts, no re-download on `docker compose up`.
+
+> **Changing models:** When switching models, old model files are not deleted
+> automatically. To free disk space:
+>
+>     docker volume rm local-whisper-obsidian_whisper_models
 
 > **GPU:** CPU-only image. GPU acceleration is not supported.
 
-> **Model cache:** Stored in named volume `whisper_models` — survives
-> container restarts, no re-download on `docker compose up`.
+**Docker commands:**
+```bash
+    make docker-build   # build the image
+    make docker-up      # start in background
+    make docker-down    # stop
+    make docker-logs    # live logs
+```
 
 ## My setup
 
 - Model: `medium` — better accuracy for multilingual notes
 - Sync: Syncthing (Android → Linux)
 - Vault structure: `0_inbox` for new voice notes, `7_system/files` for Obsidian mobile recordings
+- Native install (systemd) on laptop, Docker for NAS/homelab deployments
 
 ## License
 
