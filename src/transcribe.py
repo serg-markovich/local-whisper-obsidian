@@ -3,15 +3,16 @@
 local-whisper-obsidian: transcribe a single audio file to an Obsidian Markdown note.
 
 Usage:
-    python src/transcribe.py <audio_file> [--model small] [--language auto]
+python src/transcribe.py [--model small] [--language auto]
 
 Repository:
-    https://github.com/serg-markovich/local-whisper-obsidian
+https://github.com/serg-markovich/local-whisper-obsidian
 """
 
 import argparse
 import logging
 import os
+import platform
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -21,26 +22,37 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s %(message)s",
     stream=sys.stdout,
 )
+
 logger = logging.getLogger("local-whisper-obsidian")
 
 SUPPORTED_EXTENSIONS = {".m4a", ".mp3", ".wav", ".ogg", ".opus", ".webm", ".flac"}
 
 
+def _default_compute_type() -> str:
+    """Return float16 on Apple Silicon, int8 everywhere else."""
+    if platform.system() == "Darwin" and platform.machine() == "arm64":
+        return "float16"
+    return "int8"
+
+
 class Transcriber:
     """Wraps WhisperModel with lazy loading — model is initialized once and reused."""
 
-    def __init__(self, model_name: str = "small", device: str = "cpu"):
+    def __init__(self, model_name: str = "small", device: str = "cpu",
+                 compute_type: str | None = None):
         self.model_name = model_name
         self.device = device
+        self.compute_type = compute_type or _default_compute_type()
         self._model = None
 
     @property
     def model(self):
         if self._model is None:
             from faster_whisper import WhisperModel
-            logger.info("Loading model: %s on %s", self.model_name, self.device)
+            logger.info("Loading model: %s on %s (compute_type=%s)",
+                        self.model_name, self.device, self.compute_type)
             self._model = WhisperModel(
-                self.model_name, device=self.device, compute_type="int8"
+                self.model_name, device=self.device, compute_type=self.compute_type
             )
         return self._model
 
@@ -62,7 +74,7 @@ status: unprocessed
 language: {language}
 audio: "[[{filename}]]"
 tags:
-  - review
+- review
 ---
 
 # Voice note {now}
@@ -73,7 +85,7 @@ tags:
 
 ## Action
 
-- [ ] Process by: 
+- [ ] Process by:
 """
 
 
@@ -114,10 +126,11 @@ def main():
     )
     parser.add_argument("audio", help="Path to audio file")
     parser.add_argument("--model", default=os.getenv("MODEL", "small"),
-    help="Whisper model size: tiny, base, small, medium, large (default: small)")
+        help="Whisper model size: tiny, base, small, medium, large (default: small)")
     parser.add_argument("--language", default=os.getenv("LANGUAGE", "auto"),
-    help="Language code (e.g. en, ru, de) or 'auto' for detection (default: auto)")
-    args = parser.parse_args() 
+        help="Language code (e.g. en, ru, de) or 'auto' for detection (default: auto)")
+    args = parser.parse_args()
+
     transcriber = Transcriber(model_name=args.model)
 
     try:
