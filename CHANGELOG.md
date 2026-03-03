@@ -1,5 +1,18 @@
 # Changelog
 
+## [v0.2.0] - 2026-03-03
+
+### Fixed
+- macOS: removed `flock` (Linux-only), added `fswatch` dependency check with install hint
+- Apple Silicon: auto-detect `float16` compute type for M1/M2/M3
+
+### Improved
+- CLI: added help text for `--model` and `--language` arguments
+- README: added macOS prerequisites, First run model download warning
+
+### Tests
+- Added edge case tests for `process_file()`: skip existing, unsupported format, file not found
+
 ## [v0.1.0] - 2026-03-03
 
 ### Added
