@@ -1,20 +1,31 @@
 # Python
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*.egg-info/
+dist/
+build/
 venv/
 .venv/
-*.egg-info/
 
-# Local config (contains personal paths — never commit)
+# Models cache
+models/
+*.bin
+*.pt
+
+# Audio & transcripts (user data)
+inbox/
+*.m4a
+*.mp3
+*.wav
+*.ogg
+*.opus
+*.webm
+*.flac
+
+# Env
 .env
 *.env
 
-# Test artifacts
-tests/*.md
-tests/sample.*
-!tests/test_*.py
-
 # OS
 .DS_Store
-*.swp
+Thumbs.db
