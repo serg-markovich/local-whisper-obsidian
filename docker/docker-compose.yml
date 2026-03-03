@@ -8,10 +8,12 @@ services:
       - MODEL=${MODEL:-small}
       - LANGUAGE=${LANGUAGE:-auto}
       - SCAN_PATHS=${SCAN_PATHS:-/vault}
+      - HF_HOME=/cache/huggingface
     volumes:
       - ${VAULT_PATH}:/vault
-      - whisper_models:/root/.cache/huggingface
+      - whisper_models:/cache/huggingface
     restart: unless-stopped
+    user: "${CURRENT_UID}:${CURRENT_GID}"
 
 volumes:
   whisper_models:

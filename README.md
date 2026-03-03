@@ -115,14 +115,16 @@ not to install Python and system dependencies.
 
 **Prerequisites:** Docker and Docker Compose installed on the host.
 For autostart after reboot, ensure Docker daemon is enabled:
+
 ```bash
 sudo systemctl enable docker
 ```
 
 **Quick start:**
+
 ```bash
 cp docker/.env.example docker/.env
-nano docker/.env        # set VAULT_PATH and SCAN_PATHS
+nano docker/.env        # set VAULT_PATH, SCAN_PATHS, CURRENT_UID, CURRENT_GID
 make docker-build
 make docker-up
 make docker-logs
@@ -130,12 +132,18 @@ make docker-logs
 
 **Configuration** via `docker/.env`:
 
-| Variable     | Default  | Description                                          |
-|--------------|----------|------------------------------------------------------|
-| `VAULT_PATH` | —        | Absolute path to your Obsidian vault on the host     |
-| `MODEL`      | `small`  | Whisper model size (see Model selection table above) |
-| `LANGUAGE`   | `auto`   | Language code or `auto`                              |
-| `SCAN_PATHS` | `/vault` | Colon-separated paths **inside** the container       |
+| Variable      | Default  | Description                                          |
+|---------------|----------|------------------------------------------------------|
+| `VAULT_PATH`  | —        | Absolute path to your Obsidian vault on the host     |
+| `MODEL`       | `small`  | Whisper model size (see Model selection table above) |
+| `LANGUAGE`    | `auto`   | Language code or `auto`                              |
+| `SCAN_PATHS`  | `/vault` | Colon-separated paths **inside** the container       |
+| `CURRENT_UID` | `1000`   | Host user ID — run `id -u` to get your value         |
+| `CURRENT_GID` | `1000`   | Host group ID — run `id -g` to get your value        |
+
+> **Why CURRENT_UID/GID?** Without this, transcribed `.md` files are created
+> as `root:root` inside the mounted volume. Setting these values ensures
+> output files are owned by your host user.
 
 > **Paths:** `SCAN_PATHS` uses container-side paths. If you mount
 > `/home/user/vault:/vault`, set `SCAN_PATHS=/vault/0_inbox`.
@@ -151,18 +159,20 @@ make docker-logs
 > **GPU:** CPU-only image. GPU acceleration is not supported.
 
 **Docker commands:**
+
 ```bash
-make docker-build   # build the image
-make docker-up      # start in background
-make docker-down    # stop
-make docker-logs    # live logs
+make docker-build      # build the image
+make docker-up         # start in background
+make docker-down       # stop
+make docker-restart    # restart after config changes
+make docker-logs       # live logs
 ```
 
 ## My setup
 
 - Model: `medium` — better accuracy for multilingual notes
 - Sync: Syncthing (Android → Linux)
-- Vault structure: `0_inbox` for new voice notes, `7_system/files` for Obsidian mobile recordings
+- Vault structure: `0_inbox` for new voice notes, `7_system/files` for Obsidian desktop recordings
 - Native install (systemd) on laptop, Docker for NAS/homelab deployments
 
 ## License
