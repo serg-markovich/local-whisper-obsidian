@@ -124,7 +124,7 @@ sudo systemctl enable docker
 
 ```bash
 cp docker/.env.example docker/.env
-nano docker/.env        # set VAULT_PATH, SCAN_PATHS, CURRENT_UID, CURRENT_GID
+nano docker/.env   # set VAULT_PATH, SCAN_PATHS, then run id -u && id -g for CURRENT_UID/GID
 make docker-build
 make docker-up
 make docker-logs
@@ -138,8 +138,8 @@ make docker-logs
 | `MODEL`       | `small`  | Whisper model size (see Model selection table above) |
 | `LANGUAGE`    | `auto`   | Language code or `auto`                              |
 | `SCAN_PATHS`  | `/vault` | Colon-separated paths **inside** the container       |
-| `CURRENT_UID` | `1000`   | Host user ID — run `id -u` to get your value         |
-| `CURRENT_GID` | `1000`   | Host group ID — run `id -g` to get your value        |
+| `CURRENT_UID` | `—`   | Host user ID — run `id -u`          |
+| `CURRENT_GID` | `—`   | Host group ID — run `id -g`         |
 
 > **Why CURRENT_UID/GID?** Without this, transcribed `.md` files are created
 > as `root:root` inside the mounted volume. Setting these values ensures
