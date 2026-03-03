@@ -113,10 +113,11 @@ def main():
         description="Transcribe an audio file to an Obsidian Markdown note"
     )
     parser.add_argument("audio", help="Path to audio file")
-    parser.add_argument("--model", default=os.getenv("MODEL", "small"))
-    parser.add_argument("--language", default=os.getenv("LANGUAGE", "auto"))
-    args = parser.parse_args()
-
+    parser.add_argument("--model", default=os.getenv("MODEL", "small"),
+    help="Whisper model size: tiny, base, small, medium, large (default: small)")
+    parser.add_argument("--language", default=os.getenv("LANGUAGE", "auto"),
+    help="Language code (e.g. en, ru, de) or 'auto' for detection (default: auto)")
+    args = parser.parse_args() 
     transcriber = Transcriber(model_name=args.model)
 
     try:
