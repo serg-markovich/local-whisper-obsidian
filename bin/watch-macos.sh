@@ -13,6 +13,14 @@ ENV_FILE="${WHISPER_CONFIG:-$HOME/.config/local-whisper-obsidian/.env}"
 [ -f "$ENV_FILE" ] || { echo "Config not found: $ENV_FILE"; exit 1; }
 set -a; source "$ENV_FILE"; set +a
 
+# Check filesystem access (macOS Full Disk Access may block vault paths)
+if ! ls "${SCAN_PATHS%%:*}" &>/dev/null; then
+    echo "Error: cannot access ${SCAN_PATHS%%:*}"
+    echo "macOS may require Full Disk Access for Terminal."
+    echo "System Settings → Privacy & Security → Full Disk Access"
+    exit 1
+fi
+
 # Validate watch paths
 IFS=':' read -ra RAW_PATHS <<< "$SCAN_PATHS"
 VALID=()
@@ -29,10 +37,33 @@ done
 PYTHON="$WHISPER_ENV/bin/python"
 SCRIPT="$WHISPER_SRC/transcribe.py"
 
-# fswatch fires on file create; brief delay ensures write is complete
+# Wait until file size is stable (replaces fixed sleep)
+wait_for_stable() {
+    local file="$1"
+    local prev=-1 curr
+    while true; do
+        curr=$(stat -f%z "$file" 2>/dev/null || echo -1)
+        [ "$curr" = "$prev" ] && [ "$curr" != "-1" ] && break
+        prev=$curr
+        sleep 0.5
+    done
+}
+
+# Deduplication: skip if same file seen within last 5 seconds
+LAST_FILE=""
+LAST_TIME=0
+
 fswatch -0 -e ".*" -i "\.(m4a|mp3|wav|ogg|opus|webm|flac)$" "${VALID[@]}" \
 | while IFS= read -r -d "" file; do
-    sleep 0.5
+    NOW=$(date +%s)
+    if [ "$file" = "$LAST_FILE" ] && [ $((NOW - LAST_TIME)) -lt 5 ]; then
+        echo "Skipping duplicate event: $file"
+        continue
+    fi
+    LAST_FILE="$file"
+    LAST_TIME=$NOW
+
+    wait_for_stable "$file"
     echo "New audio detected: $file"
     "$PYTHON" "$SCRIPT" "$file" --model "$MODEL" --language "$LANGUAGE" \
         || echo "Failed to transcribe: $file"
