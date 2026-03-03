@@ -7,6 +7,8 @@ via [Faster Whisper](https://github.com/SYSTRAN/faster-whisper), and creates str
 Markdown notes directly in your Obsidian vault.
 
 ![CI](https://github.com/serg-markovich/local-whisper-obsidian/actions/workflows/ci.yml/badge.svg)
+![Python](https://img.shields.io/badge/python-3.11-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
 
 ## How it works
 
