@@ -69,19 +69,18 @@ docker-build:
 	@test -f docker/.env || { echo "Error: docker/.env not found. Run: cp docker/.env.example docker/.env"; exit 1; }
 	docker compose -f docker/docker-compose.yml --env-file docker/.env build
 
-
 docker-up:
 	@test -f docker/.env || { echo "Error: docker/.env not found. Run: cp docker/.env.example docker/.env"; exit 1; }
+	@grep -q "^CURRENT_UID=." docker/.env || { echo "Error: CURRENT_UID not set in docker/.env. Run: id -u"; exit 1; }
+	@grep -q "^CURRENT_GID=." docker/.env || { echo "Error: CURRENT_GID not set in docker/.env. Run: id -g"; exit 1; }
 	docker compose -f docker/docker-compose.yml --env-file docker/.env up -d
-
 
 docker-down:
 	docker compose -f docker/docker-compose.yml --env-file docker/.env down
 
-
 docker-restart:
 	docker compose -f docker/docker-compose.yml --env-file docker/.env restart
 
-
 docker-logs:
 	docker compose -f docker/docker-compose.yml logs -f
+
