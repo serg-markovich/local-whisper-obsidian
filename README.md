@@ -31,6 +31,9 @@ Voice memo (.m4a / .mp3 / .wav)
 - Obsidian with mobile sync (Syncthing or iCloud)
 - macOS: `brew install fswatch` (required for watch mode)
 
+> **macOS note:** macOS support is maintained but not actively tested by the author
+> (Linux-only setup). Bug reports and PRs from macOS users are welcome.
+
 ## First run
 
 On first use, the selected model is downloaded automatically (~75 MB for `tiny`, up to 3 GB for `large-v3`).
