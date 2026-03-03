@@ -29,6 +29,16 @@ Voice memo (.m4a / .mp3 / .wav)
 - Python 3.10+
 - Ubuntu 22.04+ or macOS 13+
 - Obsidian with mobile sync (Syncthing or iCloud)
+- macOS: `brew install fswatch` (required for watch mode)
+
+## First run
+
+On first use, the selected model is downloaded automatically (~75 MB for `tiny`, up to 3 GB for `large-v3`).
+To free space after switching models:
+
+```bash
+rm -rf ~/.cache/huggingface/hub/models--Systran--faster-whisper-*
+```
 
 ## Quick start
 
@@ -46,7 +56,7 @@ make logs
 All settings live in `~/.config/local-whisper-obsidian/.env` (created by `make install`):
 
 | Variable      | Default | Description                                        |
-|---------------|---------|----------------------------------------------------|
+|---------------|---------|-----------------------------------------------------|
 | `WHISPER_SRC` | —       | Path to cloned repo, e.g. `~/projects/local-whisper-obsidian/src` |
 | `WHISPER_ENV` | auto    | Path to Python venv (set by make install)          |
 | `MODEL`       | `small` | Whisper model size (see table below)               |
@@ -64,12 +74,12 @@ SCAN_PATHS=/home/user/vault/0_inbox:/home/user/vault/1_journal/assets
 
 ### Model selection
 
-| Model      | Size   | Speed (CPU) | Accuracy | Recommended for               |
-|------------|--------|-------------|----------|-------------------------------|
-| `tiny`     | 75 MB  | very fast   | low      | Quick tests                   |
-| `base`     | 145 MB | fast        | medium   | Short notes, clear audio      |
-| `small`    | 460 MB | moderate    | good     | Daily use (default)           |
-| `medium`   | 1.5 GB | slow        | better   | Important recordings          |
+| Model      | Size   | Speed (CPU) | Accuracy | Recommended for                  |
+|------------|--------|-------------|----------|----------------------------------|
+| `tiny`     | 75 MB  | very fast   | low      | Quick tests                      |
+| `base`     | 145 MB | fast        | medium   | Short notes, clear audio         |
+| `small`    | 460 MB | moderate    | good     | Daily use (default)              |
+| `medium`   | 1.5 GB | slow        | better   | Important recordings             |
 | `large-v3` | 3 GB   | very slow   | best     | GPU only, not recommended on CPU |
 
 To change the model, edit your config and restart:
@@ -106,16 +116,16 @@ not to install Python and system dependencies.
 **Prerequisites:** Docker and Docker Compose installed on the host.
 For autostart after reboot, ensure Docker daemon is enabled:
 ```bash
-    sudo systemctl enable docker
+sudo systemctl enable docker
 ```
 
 **Quick start:**
 ```bash
-    cp docker/.env.example docker/.env
-    nano docker/.env        # set VAULT_PATH and SCAN_PATHS
-    make docker-build
-    make docker-up
-    make docker-logs
+cp docker/.env.example docker/.env
+nano docker/.env        # set VAULT_PATH and SCAN_PATHS
+make docker-build
+make docker-up
+make docker-logs
 ```
 
 **Configuration** via `docker/.env`:
@@ -142,10 +152,10 @@ For autostart after reboot, ensure Docker daemon is enabled:
 
 **Docker commands:**
 ```bash
-    make docker-build   # build the image
-    make docker-up      # start in background
-    make docker-down    # stop
-    make docker-logs    # live logs
+make docker-build   # build the image
+make docker-up      # start in background
+make docker-down    # stop
+make docker-logs    # live logs
 ```
 
 ## My setup
