@@ -57,3 +57,17 @@ def test_process_file_not_found():
     transcriber = MagicMock(spec=Transcriber)
     with pytest.raises(FileNotFoundError):
         process_file("/nonexistent/voice.m4a", transcriber, "auto")
+
+def test_process_file_skips_empty_transcription(tmp_path):
+    from unittest.mock import MagicMock
+    from src.transcribe import process_file, Transcriber
+
+    audio = tmp_path / "voice.m4a"
+    audio.touch()
+    transcriber = MagicMock(spec=Transcriber)
+    transcriber.transcribe.return_value = ("", "en")
+
+    result = process_file(str(audio), transcriber, "auto")
+
+    assert result is False
+    assert not (tmp_path / "voice.md").exists()
