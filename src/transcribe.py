@@ -111,6 +111,9 @@ def process_file(audio_path: str, transcriber: Transcriber, language: str) -> bo
 
     logger.info("Transcribing: %s", audio_path)
     text, detected_lang = transcriber.transcribe(audio_path, language)
+    if not text.strip():
+        logger.warning("Empty transcription for: %s — skipping", audio_path)
+        return False
     note = build_note(audio_path, text, detected_lang)
 
     with open(md_path, "w", encoding="utf-8") as f:
@@ -118,7 +121,6 @@ def process_file(audio_path: str, transcriber: Transcriber, language: str) -> bo
 
     logger.info("Done: %s (lang=%s)", md_path, detected_lang)
     return True
-
 
 def main():
     parser = argparse.ArgumentParser(
