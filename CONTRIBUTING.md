@@ -4,18 +4,18 @@ Contributions are welcome. Here is how to get started.
 
 ## Setup
 
-\```bash
+```bash
 git clone https://github.com/serg-markovich/local-whisper-obsidian
 cd local-whisper-obsidian
 make install
-\```
+```
 
 ## Running tests
 
-\```bash
+```bash
 make test
 make lint
-\```
+```
 
 ## Submitting changes
 
