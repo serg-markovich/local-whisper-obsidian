@@ -178,6 +178,17 @@ make docker-logs       # live logs
 - Vault structure: `0_inbox` for new voice notes, `7_system/files` for Obsidian desktop recordings
 - Native install (systemd) on laptop, Docker for NAS/homelab deployments
 
+## Eigenstack
+
+This project is built around the [eigenstack](https://github.com/serg-markovich/eigenstack)
+philosophy — privacy-first, local-first infrastructure where every service
+runs on your own hardware, no cloud dependencies, no vendor lock-in.
+
+**Related projects:**
+- [eigenstack](https://github.com/serg-markovich/eigenstack) — architecture overview
+- [whisper-ollama-enricher](https://github.com/serg-markovich/whisper-ollama-enricher) — stage 2: AI enrichment (titles, tags, summaries)
+- [openwebui-systemd-stack](https://github.com/serg-markovich/openwebui-systemd-stack) — Ollama + Open WebUI on Linux
+
 ## License
 
 MIT
