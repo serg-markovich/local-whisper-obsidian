@@ -27,6 +27,20 @@ done
 
 echo "Model: $MODEL | Language: $LANGUAGE"
 
+# ── Startup scan ─────────────────────────────────────────────────────────────
+echo "Startup scan: checking for unprocessed files..."
+for p in "${VALID[@]}"; do
+    find "$p" -maxdepth 1 -type f \
+        | { grep -iE '\.(m4a|mp3|wav|ogg|opus|webm|flac)$' || true; } \
+        | while read -r file; do
+            echo "Found unprocessed: $file"
+            "$PYTHON" "$SCRIPT" "$file" --model "$MODEL" --language "$LANGUAGE" \
+                || echo "Failed to transcribe: $file"
+        done
+done
+echo "Startup scan complete."
+# ─────────────────────────────────────────────────────────────────────────────
+
 inotifywait -m -e close_write -r "${VALID[@]}" --format "%w%f" \
 | while read -r file; do
   echo "$file" | grep -qiE '\.(m4a|mp3|wav|ogg|opus|webm|flac)$' || continue

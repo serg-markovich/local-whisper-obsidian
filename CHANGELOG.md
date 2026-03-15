@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.4.0] - 2026-03-15
+
+### Added
+- Startup scan on service init: all three watchers (Linux, macOS, Docker) now
+  process audio files that arrived while the service was offline
+- Restart-safe: `transcribe.py` skips files that already have a `.md`
+  alongside them — no duplicate transcriptions on restart
+
+### Fixed
+- Startup scan: `grep` with no matches returned exit 1 under `pipefail` —
+  wrapped in `{ grep ... || true; }` to treat empty result as success
+
 ## [0.3.0] - 2026-03-03
 
 ### Fixed

@@ -49,6 +49,21 @@ wait_for_stable() {
     done
 }
 
+# ── Startup scan ─────────────────────────────────────────────────────────────
+echo "Startup scan: checking for unprocessed files..."
+for p in "${VALID[@]}"; do
+    find "$p" -maxdepth 1 -type f \
+        | { grep -iE '\.(m4a|mp3|wav|ogg|opus|webm|flac)$' || true; } \
+        | while read -r file; do
+            wait_for_stable "$file"
+            echo "Found unprocessed: $file"
+            "$PYTHON" "$SCRIPT" "$file" --model "$MODEL" --language "$LANGUAGE" \
+                || echo "Failed to transcribe: $file"
+        done
+done
+echo "Startup scan complete."
+# ─────────────────────────────────────────────────────────────────────────────
+
 # Deduplication: skip if same file seen within last 5 seconds
 LAST_FILE=""
 LAST_TIME=0

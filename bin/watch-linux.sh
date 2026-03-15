@@ -23,6 +23,22 @@ done
 PYTHON="$WHISPER_ENV/bin/python"
 SCRIPT="$WHISPER_SRC/transcribe.py"
 
+# ── Startup scan ─────────────────────────────────────────────────────────────
+# Process any audio files that arrived while the service was offline.
+# transcribe.py skips files that already have a .md alongside them.
+echo "Startup scan: checking for unprocessed files..."
+for p in "${VALID[@]}"; do
+    find "$p" -maxdepth 1 -type f \
+        | { grep -iE '\.(m4a|mp3|wav|ogg|opus|webm|flac)$' || true; } \
+        | while read -r file; do
+            echo "Found unprocessed: $file"
+            "$PYTHON" "$SCRIPT" "$file" --model "$MODEL" --language "$LANGUAGE" \
+                || echo "Failed to transcribe: $file"
+        done
+done
+echo "Startup scan complete."
+# ─────────────────────────────────────────────────────────────────────────────
+
 # Use close_write to ensure the file is fully written before processing
 inotifywait -m -e close_write -r "${VALID[@]}" --format "%w%f" \
     | while read -r file; do
