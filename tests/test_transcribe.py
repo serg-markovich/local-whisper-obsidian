@@ -7,20 +7,25 @@ from src.transcribe import Transcriber, build_note, process_file
 
 
 def test_build_note_contains_transcript():
-    note = build_note("voice.m4a", "Hello world", "en")
+    note = build_note("voice.m4a", "voice.md", "Hello world", "en")
     assert "Hello world" in note
 
 
 def test_build_note_frontmatter():
-    note = build_note("voice.m4a", "Hello world", "en")
+    note = build_note("voice.m4a", "voice.md", "Hello world", "en")
     assert "type: inbox" in note
     assert "language: en" in note
     assert 'audio: "[[voice.m4a]]"' in note
 
 
 def test_build_note_action_checkbox():
-    note = build_note("voice.m4a", "text", "ru")
+    note = build_note("voice.m4a", "voice.md", "text", "ru")
     assert "- [ ] Process by:" in note
+
+
+def test_build_note_relative_audio_path():
+    note = build_note("assets/voice.m4a", "notes/voice.md", "text", "en")
+    assert 'audio: "[[../assets/voice.m4a]]"' in note
 
 
 def test_process_file_creates_note(tmp_path):

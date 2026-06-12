@@ -63,8 +63,8 @@ class Transcriber:
         return text, info.language
 
 
-def build_note(audio_path: str, text: str, language: str) -> str:
-    filename = Path(audio_path).name
+def build_note(audio_path: str, md_path: str, text: str, language: str) -> str:
+    rel_audio = os.path.relpath(audio_path, Path(md_path).parent)
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     return f"""---
 date: {now}
@@ -72,7 +72,7 @@ type: inbox
 source: voice
 status: unprocessed
 language: {language}
-audio: "[[{filename}]]"
+audio: "[[{rel_audio}]]"
 tags:
 - review
 ---
@@ -114,7 +114,7 @@ def process_file(audio_path: str, transcriber: Transcriber, language: str) -> bo
     if not text.strip():
         logger.warning("Empty transcription for: %s — skipping", audio_path)
         return False
-    note = build_note(audio_path, text, detected_lang)
+    note = build_note(audio_path, str(md_path), text, detected_lang)
 
     with open(md_path, "w", encoding="utf-8") as f:
         f.write(note)
