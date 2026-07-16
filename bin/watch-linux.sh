@@ -34,7 +34,7 @@ for p in "${VALID[@]}"; do
             echo "Found unprocessed: $file"
             "$PYTHON" "$SCRIPT" "$file" --model "$MODEL" --language "$LANGUAGE" \
                 || echo "Failed to transcribe: $file"
-        done
+        done || true
 done
 echo "Startup scan complete."
 # ─────────────────────────────────────────────────────────────────────────────
