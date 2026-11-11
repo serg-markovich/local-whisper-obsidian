@@ -58,6 +58,8 @@ Therefore, both the Compose file and the `.env` file must remain inside the clon
 
 Start the Compose stack from UNRAID. On first start, Docker will build the image and download the selected Whisper model into the `whisper_models` volume.
 
+The `model-cache-init` service runs first as `root` and assigns the model cache volume to `CURRENT_UID:CURRENT_GID`. The main service then starts as that non-root user and can download and reuse the model.
+
 Check the container logs for model loading and transcription messages.
 
 ## 5. Verify transcription

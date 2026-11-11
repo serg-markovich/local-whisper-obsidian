@@ -4,6 +4,9 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     container_name: whisper-obsidian
+    depends_on:
+      model-cache-init:
+        condition: service_completed_successfully
     environment:
       - MODEL=${MODEL:-small}
       - LANGUAGE=${LANGUAGE:-auto}
@@ -14,6 +17,20 @@ services:
       - whisper_models:/cache/huggingface
     restart: unless-stopped
     user: "${CURRENT_UID}:${CURRENT_GID}"
+
+  model-cache-init:
+    image: busybox:stable
+    user: "0:0"
+    environment:
+      - CURRENT_UID=${CURRENT_UID:-99}
+      - CURRENT_GID=${CURRENT_GID:-100}
+    entrypoint:
+      - sh
+      - -c
+      - chown -R "$$CURRENT_UID:$$CURRENT_GID" /cache/huggingface
+    volumes:
+      - whisper_models:/cache/huggingface
+    restart: "no"
 
 volumes:
   whisper_models:
