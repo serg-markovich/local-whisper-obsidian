@@ -12,7 +12,6 @@ https://github.com/serg-markovich/local-whisper-obsidian
 import argparse
 import logging
 import os
-import platform
 import sys
 from datetime import datetime
 from pathlib import Path
