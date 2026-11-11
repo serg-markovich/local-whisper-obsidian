@@ -2,7 +2,7 @@
 
 This guide describes how to run **local-whisper-obsidian** with Docker Compose on UNRAID.
 
-> **Note:** This setup has been tested on Linux, not on UNRAID itself. If you use UNRAID and hit an issue, please open an issue with the relevant container logs.
+> **Note:** This UNRAID-specific setup has not been verified. The Docker Compose configuration is provided as-is. If you use UNRAID and hit an issue, please open an issue with the relevant container logs.
 
 ## 1. Clone the repository
 
