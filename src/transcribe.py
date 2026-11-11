@@ -29,9 +29,7 @@ SUPPORTED_EXTENSIONS = {".m4a", ".mp3", ".wav", ".ogg", ".opus", ".webm", ".flac
 
 
 def _default_compute_type() -> str:
-    """Return float16 on Apple Silicon, int8 everywhere else."""
-    if platform.system() == "Darwin" and platform.machine() == "arm64":
-        return "float16"
+    """Return int8 everywhere."""
     return "int8"
 
 
