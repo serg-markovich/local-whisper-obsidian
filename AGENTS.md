@@ -1,7 +1,7 @@
 # AGENTS.md
 
 Rules and environment for AI assistants working in this repository.
-Based on the state of `main` @ `621d3d7` (snapshot taken 2026-11-23).
+Based on the state of `main` at release `v0.5.0` (snapshot taken 2026-11-23).
 
 ## Tech Stack
 
@@ -10,7 +10,7 @@ Based on the state of `main` @ `621d3d7` (snapshot taken 2026-11-23).
 - **Glue:** Bash (`set -euo pipefail`), `inotify-tools` (Linux), `fswatch` (macOS), `systemd` user units, Docker + Docker Compose.
 - **Package manager:** `pip` + `venv`; there is no `pyproject.toml`. Dependencies live in `requirements.txt` and `requirements-dev.txt`.
 - **Tooling:** `pytest==8.3.5`, `ruff==0.9.10`; the `Makefile` is the main task runner. CI: GitHub Actions (`.github/workflows/ci.yml`, `release.yml`).
-- **Versioning:** git tags (`v0.1.0`…`v0.4.0`) + `CHANGELOG.md`; there is no version in the code or package metadata.
+- **Versioning:** git tags (`v0.1.0`…`v0.5.0`) + `CHANGELOG.md`; there is no version in the code or package metadata.
 
 ## Commands
 

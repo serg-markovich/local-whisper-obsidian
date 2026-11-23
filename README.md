@@ -216,13 +216,12 @@ make docker-logs       # live logs
 - **macOS** is not tested by the author; `fswatch` filter behavior and a possible `wait_for_stable` loop when a file is deleted are unverified.
 - **The model is reloaded for every file** (a separate `python` process per file) — slow for `medium`/`large-v3`.
 - No tests for the watcher scripts, `main()`, or `Transcriber`; no shellcheck and no ruff configuration.
-- `CHANGELOG.md` does not cover the 4 commits after `v0.4.0`.
 
 ### Next Steps
 
 1. Add an end-to-end Docker smoke test with a sample audio file (covers `model-cache-init` and transcription), and expose it as a `make` target.
 2. Make the startup scan recursive, move the extension list to a single source, and add watcher integration tests + shellcheck.
-3. Update `CHANGELOG.md` for the post-`v0.4.0` commits and extend tests to `main()` and `Transcriber`.
+3. Add `ruff.toml` (or `pyproject.toml`) and extend tests to `main()` and `Transcriber`.
 
 ## My setup
 

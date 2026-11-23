@@ -1,7 +1,7 @@
 # CONTEXT.md
 
 Technical snapshot of the `local-whisper-obsidian` repository.
-Audit date: 2026-11-23. State: branch `main`, commit `621d3d7`, `git describe` = `v0.4.0-4-g621d3d7`, working tree clean.
+Audit date: 2026-11-23. State: branch `main`, release `v0.5.0`, working tree clean.
 
 ## Project Map
 
@@ -109,21 +109,20 @@ Compose also runs a one-shot `model-cache-init` container (busybox, root) that c
 
 1. **The model is reloaded for every file.** `Transcriber` caches the model only within a process, while the watcher starts a separate `python` process per file. For `medium`/`large-v3` this adds noticeable latency and load. There is no daemon or queue.
 2. **The startup scan is not recursive.** `find "$p" -maxdepth 1` versus the recursive `inotifywait -r`/`fswatch`: files in subdirectories that arrived during downtime are not processed until a new event occurs.
-3. **The CHANGELOG lags behind `main`.** Most commits after `v0.4.0` (Docker digest pin, Docker CI job, wikilink fix, pipefail fix, UNRAID docs, Docker cache init, compute-type fix, lint fix) have no `CHANGELOG.md` entry; only the install fix is documented under Unreleased.
-4. **macOS is not tested by the author.** The `fswatch` filters (`-e ".*" -i "..."`) and `wait_for_stable` need verification; if a file is deleted, `wait_for_stable` can loop forever (`stat` returns `-1`, so the exit condition is never reached). `[UNKNOWN / NEEDS CHECK]`.
+3. **macOS is not tested by the author.** The `fswatch` filters (`-e ".*" -i "..."`) and `wait_for_stable` need verification; if a file is deleted, `wait_for_stable` can loop forever (`stat` returns `-1`, so the exit condition is never reached). `[UNKNOWN / NEEDS CHECK]`.
 
 ### P2 — hygiene and maintainability
 
-5. **No `pyproject.toml`, `ruff.toml`, type checking, or shellcheck.** `ruff check src/` runs with default rules; tests and shell scripts are not linted.
-6. **Narrow test coverage.** `build_note` and `process_file` are covered; there are no tests for `Transcriber`, `main()`, the watcher scripts, the startup scan, or Docker integration. `tests/test_transcribe.py` has an unused `Path` import and duplicate local imports.
-7. **`.gitignore` gaps:** no `.pytest_cache/`, `.ruff_cache/`, `.idea/`, `.vscode/`, `*.log`. `.dockerignore` contains `.env`, but whether it covers the nested `docker/.env` depends on Docker pattern semantics — `[UNKNOWN / NEEDS CHECK]`; the Dockerfile does not copy it.
-8. **The extension list is duplicated** across Python and three shell scripts — a desynchronization risk.
-9. **No automated dependency updates** (no Dependabot/Renovate). Versions are pinned and the base image is pinned by digest.
-10. **No reprocess/force mode and no retry queue.** Failures are only logged; retrying is possible only after removing or lacking the `.md`. There are no failure notifications.
-11. **`install.sh` is not idempotent** (a repeated `git clone` into the same path fails) and uses the `bash <(curl ...)` pattern — standard, but it requires trusting the source.
-12. **Shell scripts are stored in git with mode `100644`.** Running `./bin/watch-linux.sh` directly will not work; `make install` and the Dockerfile run `chmod +x` on their copies. `install.sh` is also not executable.
-13. **No version in metadata.** The version is defined only by tags and `CHANGELOG.md`; there is no `__version__`.
-14. **`logging.basicConfig()` runs at import time** — using the module as a library overrides the host's logging configuration.
+4. **No `pyproject.toml`, `ruff.toml`, type checking, or shellcheck.** `ruff check src/` runs with default rules; tests and shell scripts are not linted.
+5. **Narrow test coverage.** `build_note` and `process_file` are covered; there are no tests for `Transcriber`, `main()`, the watcher scripts, the startup scan, or Docker integration. `tests/test_transcribe.py` has an unused `Path` import and duplicate local imports.
+6. **`.gitignore` gaps:** no `.pytest_cache/`, `.ruff_cache/`, `.idea/`, `.vscode/`, `*.log`. `.dockerignore` contains `.env`, but whether it covers the nested `docker/.env` depends on Docker pattern semantics — `[UNKNOWN / NEEDS CHECK]`; the Dockerfile does not copy it.
+7. **The extension list is duplicated** across Python and three shell scripts — a desynchronization risk.
+8. **No automated dependency updates** (no Dependabot/Renovate). Versions are pinned and the base image is pinned by digest.
+9. **No reprocess/force mode and no retry queue.** Failures are only logged; retrying is possible only after removing or lacking the `.md`. There are no failure notifications.
+10. **`install.sh` is not idempotent** (a repeated `git clone` into the same path fails) and uses the `bash <(curl ...)` pattern — standard, but it requires trusting the source.
+11. **Shell scripts are stored in git with mode `100644`.** Running `./bin/watch-linux.sh` directly will not work; `make install` and the Dockerfile run `chmod +x` on their copies. `install.sh` is also not executable.
+12. **No version in metadata.** The version is defined only by tags and `CHANGELOG.md`; there is no `__version__`.
+13. **`logging.basicConfig()` runs at import time** — using the module as a library overrides the host's logging configuration.
 
 ## Revival Effort Estimate
 

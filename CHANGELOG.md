@@ -3,18 +3,25 @@
 All notable changes to this project will be documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [0.5.0] - 2026-11-23
 
 ### Added
 - `AGENTS.md` and `CONTEXT.md`: repository context for AI assistants and maintainers
+- UNRAID Docker Compose setup guide (`docs/unraid.md`)
 
 ### Fixed
 - Fresh native install: `make install` now writes `WHISPER_SRC` into the generated
   config, and the Linux/macOS watchers exit with a clear error when the path is
   missing or does not contain `transcribe.py`
+- Docker: one-shot `model-cache-init` container sets model-cache volume ownership
+  for non-root containers
+- Apple Silicon: use `int8` compute type to avoid `float16` errors
+- Cross-directory audio: wikilink now resolves with a relative path
 
 ### Changed
 - `Makefile`: added a `config` target; `install` now depends on it
+- Docker base image pinned by digest for reproducible builds
+- CI builds the Docker image
 - README: added status, overview, and roadmap sections; documented the install flow
 
 ## [0.4.0] - 2026-03-15
