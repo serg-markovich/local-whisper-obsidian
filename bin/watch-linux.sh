@@ -7,6 +7,10 @@ ENV_FILE="${WHISPER_CONFIG:-$HOME/.config/local-whisper-obsidian/.env}"
 [ -f "$ENV_FILE" ] || { echo "Config not found: $ENV_FILE"; exit 1; }
 set -a; source "$ENV_FILE"; set +a
 
+# Validate the repository path before touching the filesystem
+[ -n "${WHISPER_SRC:-}" ] || { echo "Error: WHISPER_SRC is not set in $ENV_FILE"; exit 1; }
+[ -f "$WHISPER_SRC/transcribe.py" ] || { echo "Error: transcribe.py not found at $WHISPER_SRC"; exit 1; }
+
 # Validate watch paths
 IFS=':' read -ra RAW_PATHS <<< "$SCAN_PATHS"
 VALID=()

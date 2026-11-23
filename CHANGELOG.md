@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Added
+- `AGENTS.md` and `CONTEXT.md`: repository context for AI assistants and maintainers
+
+### Fixed
+- Fresh native install: `make install` now writes `WHISPER_SRC` into the generated
+  config, and the Linux/macOS watchers exit with a clear error when the path is
+  missing or does not contain `transcribe.py`
+
+### Changed
+- `Makefile`: added a `config` target; `install` now depends on it
+- README: added status, overview, and roadmap sections; documented the install flow
+
 ## [0.4.0] - 2026-03-15
 
 ### Added

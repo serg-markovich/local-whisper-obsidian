@@ -1,13 +1,25 @@
-.PHONY: install start stop restart status logs test lint clean docker-build docker-up docker-down docker-logs docker-restart
+.PHONY: config install start stop restart status logs test lint clean docker-build docker-up docker-down docker-logs docker-restart
 
 CONFIG_DIR  := $(HOME)/.config/local-whisper-obsidian
 SYSTEMD_DIR := $(HOME)/.config/systemd/user
 VENV_DIR    := $(HOME)/.local/share/local-whisper-obsidian/venv
 OS          := $(shell uname -s)
 
-install:
-	@echo "Installing local-whisper-obsidian..."
+# Create the user config once and make sure WHISPER_SRC points at this checkout.
+config:
 	mkdir -p $(CONFIG_DIR)
+	@[ -f $(CONFIG_DIR)/.env ] \
+		|| (cp .env.example $(CONFIG_DIR)/.env \
+			&& echo "Config created. Edit before starting: nano $(CONFIG_DIR)/.env")
+	@if ! grep -q '^WHISPER_SRC=.' $(CONFIG_DIR)/.env; then \
+		grep -v '^WHISPER_SRC=' $(CONFIG_DIR)/.env > $(CONFIG_DIR)/.env.tmp || true; \
+		echo 'WHISPER_SRC="$(CURDIR)/src"' >> $(CONFIG_DIR)/.env.tmp; \
+		mv $(CONFIG_DIR)/.env.tmp $(CONFIG_DIR)/.env; \
+		echo "Set WHISPER_SRC=$(CURDIR)/src"; \
+	fi
+
+install: config
+	@echo "Installing local-whisper-obsidian..."
 	python3 -m venv $(VENV_DIR)
 	$(VENV_DIR)/bin/pip install -q --upgrade pip
 	$(VENV_DIR)/bin/pip install -q -r requirements.txt
@@ -15,9 +27,6 @@ ifeq ($(OS),Linux)
 	sudo apt-get install -q -y inotify-tools
 	cp bin/watch-linux.sh $(CONFIG_DIR)/watch.sh
 	chmod +x $(CONFIG_DIR)/watch.sh
-	@[ -f $(CONFIG_DIR)/.env ] \
-		|| (cp .env.example $(CONFIG_DIR)/.env \
-			&& echo "Config created. Edit before starting: nano $(CONFIG_DIR)/.env")
 	mkdir -p $(SYSTEMD_DIR)
 	cp systemd/local-whisper-obsidian.service $(SYSTEMD_DIR)/
 	systemctl --user daemon-reload
@@ -27,9 +36,6 @@ else ifeq ($(OS),Darwin)
 	@which fswatch > /dev/null || brew install fswatch
 	cp bin/watch-macos.sh $(CONFIG_DIR)/watch.sh
 	chmod +x $(CONFIG_DIR)/watch.sh
-	@[ -f $(CONFIG_DIR)/.env ] \
-		|| (cp .env.example $(CONFIG_DIR)/.env \
-			&& echo "Config created. Edit before starting: nano $(CONFIG_DIR)/.env")
 	@echo "Done. Edit config, then: make start"
 	@echo "Note: to run on startup, set up a launchd plist manually."
 else
